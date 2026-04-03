@@ -5,7 +5,7 @@ Genesis Core — Shared Epistemological & Provenance Models
 from .epistemology import EpistemicStatus, Evidence, ResultContract
 from .provenance import Provenance
 from .temporal import TemporalValidity
-from .contradiction import Claim, PreservedContradiction
+from .contradiction import Claim, PreservedContradiction, verifier_contradictions
 
 __version__ = "1.0.0"
 
@@ -17,5 +17,6 @@ __all__ = [
     "TemporalValidity",
     "Claim",
     "PreservedContradiction",
+    "verifier_contradictions",
 ]
 
