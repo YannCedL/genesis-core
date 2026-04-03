@@ -27,3 +27,34 @@ class PreservedContradiction(BaseModel):
     resolution_notes: Optional[str] = Field(None, description="Explanation if resolved")
 
 
+def verifier_contradictions(claims: List[Claim]) -> List[PreservedContradiction]:
+    # fonction simple pour trouver si 2 sources disent pas la meme chose
+    contradictions = []
+    # grouper par sujet et attribut
+    groupes = {}
+    for c in claims:
+        cle = f"{c.subject}:{c.predicate}"
+        if cle not in groupes:
+            groupes[cle] = []
+        groupes[cle].append(c)
+    
+    # si les valeurs different pour la meme cle, c'est une contradiction
+    compteur = 1
+    for cle, liste_claims in groupes.items():
+        if len(liste_claims) >= 2:
+            premiere_valeur = liste_claims[0].value
+            a_desaccord = any(c.value != premiere_valeur for c in liste_claims)
+            if a_desaccord:
+                sujet, attribut = cle.split(":", 1)
+                contradictions.append(PreservedContradiction(
+                    contradiction_id=f"contra_{compteur:03d}",
+                    subject=sujet,
+                    predicate=attribut,
+                    claims=liste_claims,
+                    resolved=False
+                ))
+                compteur += 1
+
+    return contradictions
+
+

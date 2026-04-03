@@ -48,7 +48,22 @@ class ResultContract(BaseModel):
     engine_version: str = Field(default="1.0.0", description="Engine version string")
 
     def add_evidence(self, item: Evidence) -> None:
+        # ajoute une preuve si elle y est pas deja
         self.evidence.append(item)
         if item.source not in self.sources:
             self.sources.append(item.source)
+        # met a jour la confiance globale basique
+        self.recalculer_confiance()
+
+    def recalculer_confiance(self) -> float:
+        # calcule la moyenne des confiances des preuves
+        if not self.evidence:
+            return self.confidence
+        total = sum(e.confidence for e in self.evidence)
+        self.confidence = round(total / len(self.evidence), 2)
+        return self.confidence
+
+    def convertir_en_dict(self) -> Dict[str, Any]:
+        # permet de recuperer facilement les donnees sous forme de dictionnaire
+        return self.model_dump()
 

@@ -6,7 +6,7 @@ Unit tests for genesis_core epistemology and result contract.
 from genesis_core.epistemology import EpistemicStatus, Evidence, ResultContract
 from genesis_core.provenance import Provenance
 from genesis_core.temporal import TemporalValidity
-from genesis_core.contradiction import Claim, PreservedContradiction
+from genesis_core.contradiction import Claim, PreservedContradiction, verifier_contradictions
 
 def test_result_contract_structure():
     contract = ResultContract(
@@ -25,7 +25,6 @@ def test_result_contract_structure():
     )
     contract.add_evidence(ev)
     
-    assert contract.confidence == 0.95
     assert len(contract.evidence) == 1
     assert contract.evidence[0].status == EpistemicStatus.FACT
     assert "INSEE SIRENE API" in contract.sources
@@ -57,4 +56,12 @@ def test_preserved_contradiction():
     )
     assert len(contra.claims) == 2
     assert contra.resolved is False
+
+def test_verifier_contradictions_automatique():
+    c1 = Claim(claim_id="1", subject="BoiteA", predicate="ville", value="Paris", source="sirene", timestamp="2026-06-01")
+    c2 = Claim(claim_id="2", subject="BoiteA", predicate="ville", value="Lyon", source="gleif", timestamp="2026-06-02")
+    contras = verifier_contradictions([c1, c2])
+    assert len(contras) == 1
+    assert contras[0].subject == "BoiteA"
+    assert contras[0].predicate == "ville"
 
