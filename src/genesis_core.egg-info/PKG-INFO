@@ -1,0 +1,56 @@
+Metadata-Version: 2.4
+Name: genesis-core
+Version: 1.0.0
+Summary: Core epistemological schemas, provenance, temporal validity, and Cerebro contract models for Genesis OSINT Ecosystem
+Author: Genesis OSINT Team
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: typing-extensions>=4.5.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+
+# Genesis Core — Shared Epistemological & Contract Library
+
+`genesis-core` provides the fundamental Pydantic schemas, epistemological definitions, provenance structures, and standard result contracts for all 37 products in the OSINT Intelligence Ecosystem.
+
+## 🎯 Purpose
+
+- Enforces strict separation between `FACT`, `OBSERVATION`, `CORRELATION`, `INFERENCE`, and `HYPOTHESIS`.
+- Provides the canonical `ResultContract` JSON structure defined in `00_MASTER_CONTEXT.md`.
+- Implements temporal validity wrappers for historical point-in-time reconstruction.
+- Implements preserved contradiction structures so conflicting evidence is never silently suppressed.
+
+## 📦 Installation
+
+```bash
+pip install -e .
+```
+
+## 💻 Usage Example
+
+```python
+from genesis_core import ResultContract, Evidence, EpistemicStatus
+
+contract = ResultContract(
+    result={"entity_id": "ORG-12345", "name": "Airbus SE"},
+    confidence=0.98
+)
+
+contract.add_evidence(Evidence(
+    subject="ORG-12345",
+    predicate="legal_name",
+    value="Airbus SE",
+    source="GLEIF API",
+    observed_at="2026-06-24T10:00:00Z",
+    confidence=1.0,
+    status=EpistemicStatus.FACT
+))
+
+print(contract.model_dump_json(indent=2))
+```
+
+## 📄 License & Compliance
+
+Complies with GDPR minimization guidelines and French/EU legal standards.
